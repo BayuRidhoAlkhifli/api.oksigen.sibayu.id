@@ -5,18 +5,32 @@ const operationhour = require("../../models/operationhour");
 
 exports._createData = async (params) => {
   try {
-    let storeId;
-    // let storeData = await model.Store
-    //   .create(params)
-    //   .then( async (result) => {
-    //     // console.log(result.toJSON());
-    //     storeId = result.id
-    //   })
-      console.log(Array.isArray(params.operationHour), params.operationHour);
+    const { storeData, operationData } = params;
+
+    const store = await model.Store.create(storeData);
+    const operations = await model.OperationHour.bulkCreate(operationData);
+
+
+    if(!store || !operations) {
       return {
-        status: 200,
-        message: "Successfully Create Client.",
-      };
+        status: 400,
+        message: "error store data"
+      }
+    }
+
+    const detailStoreData = operations.map(value => {
+      return {
+        storeId: store.id,
+        operationHourId: value.id
+      }
+    });
+
+    const createDetail = await model.StoreDetail.bulkCreate(detailStoreData)
+    
+    return {
+      status: 200,
+      message: "Successfully Create Client.",
+    };
   } catch (error) {
     return {
       status: 500,
