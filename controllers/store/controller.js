@@ -29,7 +29,7 @@ exports._createData = async (params) => {
     
     return {
       status: 200,
-      message: "Successfully Create Client.",
+      message: "Successfully Input Store Data.",
     };
   } catch (error) {
     return {
